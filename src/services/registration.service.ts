@@ -132,6 +132,55 @@ export class RegistrationService {
     };
   }
 
+  static async getRegistrationByQueueNumber(queueNumber: string): Promise<RegistrationWithPatient | null> {
+    const today = new Date().toISOString().split('T')[0];
+    
+    const { data, error } = await supabase
+      .from('registrasi_kunjungan')
+      .select(`
+        *,
+        identitas_pasien!fk_registrasi_pasien (
+          id_pasien,
+          no_rm,
+          nik,
+          nama_lengkap,
+          tgl_lahir,
+          jenis_kelamin,
+          no_hp,
+          alamat,
+          pekerjaan,
+          pendidikan,
+          status_kawin,
+          tempat_lahir,
+          agama,
+          golongan_darah,
+          no_bpjs,
+          email,
+          nama_ibu,
+          nama_ayah,
+          nama_wali,
+          no_hp_wali,
+          created_at
+        )
+      `)
+      .eq('no_antrian', queueNumber.toUpperCase())
+      .eq('tgl_registrasi', today)
+      .neq('status_registrasi', 'Selesai')
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching registration by queue number:', error);
+      return null;
+    }
+
+    if (!data) return null;
+
+    return {
+      ...data,
+      pasien: data.identitas_pasien,
+    };
+  }
+
   static async updateRegistrationStatus(
     id: string,
     status: 'Menunggu' | 'Dipanggil' | 'Selesai' | 'Batal'

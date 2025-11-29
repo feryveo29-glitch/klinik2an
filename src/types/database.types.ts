@@ -56,14 +56,14 @@ export interface SoapSubjektif {
 export interface SoapObjektif {
   id_objektif: string;
   id_kunjungan: string;
-  keadaan_umum?: string;
-  tv_td?: string;
-  tv_nadi?: number;
-  tv_rr?: number;
-  tv_suhu?: number;
-  bb?: number;
-  tb?: number;
-  fisik_naratif?: string;
+  td_sistol?: number;
+  td_diastol?: number;
+  nadi?: number;
+  respiratory_rate?: number;
+  suhu?: number;
+  berat_badan?: number;
+  tinggi_badan?: number;
+  pemeriksaan_fisik?: string;
   created_at: string;
   updated_at: string;
   metadata_user_buat?: string;
@@ -72,11 +72,8 @@ export interface SoapObjektif {
 export interface PemeriksaanPenunjang {
   id_pemeriksaan: string;
   id_kunjungan: string;
-  jenis: string;
-  nama_pemeriksaan: string;
-  hasil?: string;
-  satuan?: string;
-  id_file_lampiran?: string;
+  hasil_file?: string;
+  catatan_klinis?: string;
   created_at: string;
   updated_at: string;
   metadata_user_buat?: string;
@@ -85,7 +82,10 @@ export interface PemeriksaanPenunjang {
 export interface SoapAsesmenDiagnosis {
   id_asesmen: string;
   id_kunjungan: string;
-  catatan_klinis?: string;
+  diagnosis?: {
+    kode_icd10: string;
+    nama_diagnosis: string;
+  }[];
   created_at: string;
   updated_at: string;
   metadata_user_buat?: string;
@@ -94,7 +94,6 @@ export interface SoapAsesmenDiagnosis {
 export interface Diagnosis {
   id_diagnosis: string;
   id_asesmen: string;
-  jenis_diagnosis: string;
   kode_icd10: string;
   nama_diagnosis: string;
   created_at: string;
@@ -105,8 +104,7 @@ export interface Diagnosis {
 export interface SoapPlan {
   id_plan: string;
   id_kunjungan: string;
-  rencana_umum?: string;
-  rencana_kontrol?: string;
+  rencana_terapi?: string;
   created_at: string;
   updated_at: string;
   metadata_user_buat?: string;

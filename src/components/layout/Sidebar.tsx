@@ -12,6 +12,7 @@ import {
   Upload,
   ClipboardList,
   Stethoscope,
+  Printer,
 } from 'lucide-react';
 import type { User } from '../../types/auth.types';
 
@@ -33,6 +34,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
       { icon: PlusCircle, label: 'Pendaftaran Pasien', path: '/patient-registration' },
       { icon: Stethoscope, label: 'Pemeriksaan Pasien', path: '/patient-examination' },
       { icon: FileText, label: 'Riwayat Input', path: '/medical-records' },
+      { icon: Printer, label: 'Cetak Resume Medis', path: '/print-medical-record' },
     ],
     dosen: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -41,6 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
       { icon: Stethoscope, label: 'Pemeriksaan Pasien', path: '/patient-examination' },
       { icon: Users, label: 'Data Pasien', path: '/patients' },
       { icon: GraduationCap, label: 'Data Mahasiswa', path: '/students' },
+      { icon: Printer, label: 'Cetak Resume Medis', path: '/print-medical-record' },
     ],
     admin: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -51,6 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
       { icon: GraduationCap, label: 'Data Mahasiswa', path: '/students' },
       { icon: UserPlus, label: 'Manajemen User', path: '/users' },
       { icon: Upload, label: 'Upload Mahasiswa', path: '/upload-mahasiswa' },
+      { icon: Printer, label: 'Cetak Resume Medis', path: '/print-medical-record' },
     ],
   };
 
@@ -94,11 +98,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
               <Button
                 key={item.path}
                 variant={active ? 'default' : 'ghost'}
-                className={`w-full justify-start gap-3 ${
-                  active
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'text-slate-700 hover:bg-slate-100'
-                }`}
+                className={`w-full justify-start gap-3 ${active
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'text-slate-700 hover:bg-slate-100'
+                  }`}
                 onClick={() => navigate(item.path)}
               >
                 <Icon className="w-5 h-5" />

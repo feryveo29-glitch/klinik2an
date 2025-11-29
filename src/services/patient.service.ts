@@ -112,21 +112,28 @@ export class PatientService {
 
     const kunjunganWithDiagnosis = await Promise.all(
       (kunjunganData || []).map(async (kunjungan) => {
-        const { data: asesmenData } = await supabase
+        const { data: asesmenList } = await supabase
           .from('soap_asesmen_diagnosis')
           .select(`
-            diagnosis (
+            diagnoses:diagnosis (
               kode_icd10,
               nama_diagnosis
             )
           `)
           .eq('id_kunjungan', kunjungan.id_kunjungan)
-          .maybeSingle();
+          .limit(1);
 
-        const diagnosisArray = asesmenData?.diagnosis as any[];
-        const firstDiagnosis = Array.isArray(diagnosisArray)
-          ? diagnosisArray[0]
-          : null;
+        const asesmenData = asesmenList?.[0];
+
+        // Handle both array and single object response from Supabase
+        const diagnosesData = (asesmenData as any)?.diagnoses;
+        let firstDiagnosis = null;
+
+        if (Array.isArray(diagnosesData) && diagnosesData.length > 0) {
+          firstDiagnosis = diagnosesData[0];
+        } else if (diagnosesData && !Array.isArray(diagnosesData)) {
+          firstDiagnosis = diagnosesData;
+        }
 
         return {
           id_kunjungan: kunjungan.id_kunjungan,
@@ -137,9 +144,9 @@ export class PatientService {
           tenaga_medis_pj: kunjungan.tenaga_medis_pj,
           diagnosis: firstDiagnosis
             ? {
-                kode_icd10: firstDiagnosis.kode_icd10,
-                nama_diagnosis: firstDiagnosis.nama_diagnosis,
-              }
+              kode_icd10: firstDiagnosis.kode_icd10,
+              nama_diagnosis: firstDiagnosis.nama_diagnosis,
+            }
             : undefined,
           mahasiswa: (kunjungan as any).users
             ? { full_name: (kunjungan as any).users.full_name }

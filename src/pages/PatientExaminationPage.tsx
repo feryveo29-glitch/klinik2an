@@ -24,6 +24,7 @@ import {
 import { PatientService, type Patient } from '../services/patient.service';
 import { MedicalRecordsService } from '../services/medical-records.service';
 import { DummyDataService } from '../services/dummy-data.service';
+import { RegistrationService, type RegistrationWithPatient } from '../services/registration.service';
 import type { User } from '../types/auth.types';
 
 export const PatientExaminationPage: React.FC = () => {
@@ -42,6 +43,9 @@ export const PatientExaminationPage: React.FC = () => {
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [showPatientList, setShowPatientList] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [queueNumber, setQueueNumber] = useState('');
+  const [loadingQueue, setLoadingQueue] = useState(false);
+  const [registrationData, setRegistrationData] = useState<RegistrationWithPatient | null>(null);
 
   const [formData, setFormData] = useState({
     tgl_kunjungan: '',
@@ -115,6 +119,48 @@ export const PatientExaminationPage: React.FC = () => {
     setSelectedPatient(patient);
     setSearchQuery(`${patient.no_rm} - ${patient.nama_lengkap}`);
     setShowPatientList(false);
+    setRegistrationData(null); // Clear registration data when manually selecting patient
+  };
+
+  const handleSearchByQueue = async () => {
+    if (!queueNumber.trim()) {
+      alert('Masukkan nomor antrian');
+      return;
+    }
+
+    setLoadingQueue(true);
+    try {
+      const registration = await RegistrationService.getRegistrationByQueueNumber(queueNumber);
+
+      if (!registration) {
+        alert('Nomor antrian tidak ditemukan atau sudah selesai');
+        setLoadingQueue(false);
+        return;
+      }
+
+      // Set patient data from registration
+      const patientData = registration.pasien as any;
+      setSelectedPatient(patientData);
+      setSearchQuery(`${patientData.no_rm} - ${patientData.nama_lengkap}`);
+      setRegistrationData(registration);
+
+      // Auto-fill form data from registration
+      setFormData(prev => ({
+        ...prev,
+        tgl_kunjungan: new Date().toISOString().slice(0, 16),
+        jenis_kunjungan: registration.jenis_kunjungan,
+        jenis_pasien: registration.jenis_pasien,
+        unit_pelayanan: registration.poli_tujuan,
+        keluhan_utama: registration.keluhan_utama || '',
+      }));
+
+      alert('Data registrasi berhasil dimuat!');
+    } catch (error) {
+      console.error('Error searching by queue:', error);
+      alert('Gagal mencari nomor antrian');
+    } finally {
+      setLoadingQueue(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -188,7 +234,7 @@ export const PatientExaminationPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await MedicalRecordsService.createMedicalRecord({
+      const result = await MedicalRecordsService.createMedicalRecord({
         patientId: selectedPatient.id_pasien,
         kunjungan: {
           tgl_kunjungan: formData.tgl_kunjungan,
@@ -230,9 +276,22 @@ export const PatientExaminationPage: React.FC = () => {
         },
       });
 
+      // If this examination is from a registration, link them
+      if (registrationData && result?.kunjunganId) {
+        try {
+          await RegistrationService.linkToVisit(
+            registrationData.id_registrasi,
+            result.kunjunganId
+          );
+        } catch (linkError) {
+          console.error('Failed to link registration to visit:', linkError);
+          // Don't fail the whole process if linking fails
+        }
+      }
+
       setSuccess(true);
       setTimeout(() => {
-        navigate('/medical-records');
+        navigate(`/patients/${selectedPatient.id_pasien}`);
       }, 2000);
     } catch (error: any) {
       console.error('Failed to create medical record:', error);
@@ -293,8 +352,48 @@ export const PatientExaminationPage: React.FC = () => {
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold border-b pb-2">Pilih Pasien</h3>
 
+                  {/* Search by Queue Number */}
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <Label htmlFor="queue-search" className="text-blue-900 font-semibold">
+                      Cari Berdasarkan Nomor Antrian
+                    </Label>
+                    <p className="text-xs text-blue-700 mb-2">
+                      Masukkan nomor antrian dari registrasi (contoh: A001)
+                    </p>
+                    <div className="flex gap-2">
+                      <Input
+                        id="queue-search"
+                        placeholder="A001"
+                        value={queueNumber}
+                        onChange={(e) => setQueueNumber(e.target.value.toUpperCase())}
+                        maxLength={4}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleSearchByQueue}
+                        disabled={loadingQueue || !queueNumber}
+                      >
+                        {loadingQueue ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Mencari...
+                          </>
+                        ) : (
+                          <>
+                            <Search className="w-4 h-4 mr-2" />
+                            Cari
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="text-center text-sm text-slate-500">atau</div>
+
+                  {/* Search by Name/RM/NIK */}
                   <div className="relative">
-                    <Label htmlFor="patient-search">Cari Pasien</Label>
+                    <Label htmlFor="patient-search">Cari Pasien Manual</Label>
                     <div className="relative mt-1">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <Input
@@ -328,33 +427,51 @@ export const PatientExaminationPage: React.FC = () => {
                   </div>
 
                   {selectedPatient && (
-                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="font-semibold text-blue-900 mb-2">
-                        Pasien Terpilih
+                    <>
+                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="font-semibold text-blue-900 mb-2">
+                          Pasien Terpilih
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <span className="text-slate-600">No. RM:</span>{' '}
+                            <span className="font-medium">{selectedPatient.no_rm}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-600">NIK:</span>{' '}
+                            <span className="font-medium">{selectedPatient.nik}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-600">Nama:</span>{' '}
+                            <span className="font-medium">
+                              {selectedPatient.nama_lengkap}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-600">Umur:</span>{' '}
+                            <span className="font-medium">
+                              {PatientService.calculateAge(selectedPatient.tgl_lahir)} tahun
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div>
-                          <span className="text-slate-600">No. RM:</span>{' '}
-                          <span className="font-medium">{selectedPatient.no_rm}</span>
+
+                      {registrationData && (
+                        <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                          <div className="flex items-center gap-2 mb-2">
+                            <CheckCircle2 className="w-5 h-5 text-green-600" />
+                            <span className="font-semibold text-green-900">
+                              Data dari Registrasi: {registrationData.no_antrian}
+                            </span>
+                          </div>
+                          <div className="text-sm text-green-800 space-y-1">
+                            <p>Waktu Registrasi: {new Date(registrationData.waktu_registrasi).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
+                            <p>Status: {registrationData.status_registrasi}</p>
+                            <p className="text-xs mt-2 text-green-700">Data kunjungan telah diisi otomatis dari registrasi</p>
+                          </div>
                         </div>
-                        <div>
-                          <span className="text-slate-600">NIK:</span>{' '}
-                          <span className="font-medium">{selectedPatient.nik}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-600">Nama:</span>{' '}
-                          <span className="font-medium">
-                            {selectedPatient.nama_lengkap}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-slate-600">Umur:</span>{' '}
-                          <span className="font-medium">
-                            {PatientService.calculateAge(selectedPatient.tgl_lahir)} tahun
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                      )}
+                    </>
                   )}
                 </div>
 

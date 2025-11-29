@@ -150,204 +150,203 @@ export const PatientDetailPage: React.FC = () => {
   return (
     <PageWrapper>
       <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/patients')}
-          className="gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Kembali
-        </Button>
-      </div>
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/patients')}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Kembali
+          </Button>
+        </div>
 
-      <Card className="border-t-4 border-t-blue-500">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-2xl">{patient.nama_lengkap}</CardTitle>
-              <p className="text-slate-600 mt-1">
-                No. RM: <span className="font-semibold">{patient.no_rm}</span>
-              </p>
-            </div>
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-              {patient.nama_lengkap.charAt(0).toUpperCase()}
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <User className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">NIK</p>
-                  <p className="font-medium text-slate-900">{patient.nik}</p>
-                </div>
+        <Card className="border-t-4 border-t-blue-500">
+          <CardHeader>
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-2xl">{patient.nama_lengkap}</CardTitle>
+                <p className="text-slate-600 mt-1">
+                  No. RM: <span className="font-semibold">{patient.no_rm}</span>
+                </p>
               </div>
-
-              <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">Tanggal Lahir / Umur</p>
-                  <p className="font-medium text-slate-900">
-                    {formatDate(patient.tgl_lahir)} ({calculateAge(patient.tgl_lahir)}{' '}
-                    tahun)
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Heart className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">Jenis Kelamin</p>
-                  <p className="font-medium text-slate-900">
-                    {patient.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Briefcase className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">Pekerjaan</p>
-                  <p className="font-medium text-slate-900">
-                    {patient.pekerjaan || '-'}
-                  </p>
-                </div>
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                {patient.nama_lengkap.charAt(0).toUpperCase()}
               </div>
             </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <User className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">NIK</p>
+                    <p className="font-medium text-slate-900">{patient.nik}</p>
+                  </div>
+                </div>
 
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <GraduationCap className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">Pendidikan</p>
-                  <p className="font-medium text-slate-900">
-                    {patient.pendidikan || '-'}
-                  </p>
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">Tanggal Lahir / Umur</p>
+                    <p className="font-medium text-slate-900">
+                      {formatDate(patient.tgl_lahir)} ({calculateAge(patient.tgl_lahir)}{' '}
+                      tahun)
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Heart className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">Jenis Kelamin</p>
+                    <p className="font-medium text-slate-900">
+                      {patient.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Briefcase className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">Pekerjaan</p>
+                    <p className="font-medium text-slate-900">
+                      {patient.pekerjaan || '-'}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Heart className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">Status Perkawinan</p>
-                  <p className="font-medium text-slate-900">
-                    {patient.status_kawin || '-'}
-                  </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <GraduationCap className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">Pendidikan</p>
+                    <p className="font-medium text-slate-900">
+                      {patient.pendidikan || '-'}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">No. HP</p>
-                  <p className="font-medium text-slate-900">
-                    {patient.no_hp || '-'}
-                  </p>
+                <div className="flex items-start gap-3">
+                  <Heart className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">Status Perkawinan</p>
+                    <p className="font-medium text-slate-900">
+                      {patient.status_kawin || '-'}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-500">Alamat</p>
-                  <p className="font-medium text-slate-900">
-                    {patient.alamat || '-'}
-                  </p>
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">No. HP</p>
+                    <p className="font-medium text-slate-900">
+                      {patient.no_hp || '-'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-500">Alamat</p>
+                    <p className="font-medium text-slate-900">
+                      {patient.alamat || '-'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Riwayat Kunjungan ({patient.kunjungan.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {patient.kunjungan.length > 0 ? (
-            <div className="space-y-4">
-              {patient.kunjungan.map((kunjungan) => (
-                <div
-                  key={kunjungan.id_kunjungan}
-                  className="border rounded-lg p-4 hover:bg-slate-50 transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="font-semibold text-slate-900">
-                        {formatDateTime(kunjungan.tgl_kunjungan)}
-                      </p>
-                      <p className="text-sm text-slate-500 mt-1">
-                        {kunjungan.unit_pelayanan} • {kunjungan.jenis_kunjungan}
-                      </p>
-                    </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        kunjungan.jenis_pasien === 'BPJS'
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Riwayat Kunjungan ({patient.kunjungan.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {patient.kunjungan.length > 0 ? (
+              <div className="space-y-4">
+                {patient.kunjungan.map((kunjungan) => (
+                  <div
+                    key={kunjungan.id_kunjungan}
+                    className="border rounded-lg p-4 hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-semibold text-slate-900">
+                          {formatDateTime(kunjungan.tgl_kunjungan)}
+                        </p>
+                        <p className="text-sm text-slate-500 mt-1">
+                          {kunjungan.unit_pelayanan} • {kunjungan.jenis_kunjungan}
+                        </p>
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${kunjungan.jenis_pasien === 'BPJS'
                           ? 'bg-green-100 text-green-700'
                           : 'bg-blue-100 text-blue-700'
-                      }`}
-                    >
-                      {kunjungan.jenis_pasien}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-slate-500">Tenaga Medis</p>
-                      <p className="font-medium text-slate-900">
-                        {kunjungan.tenaga_medis_pj}
-                      </p>
+                          }`}
+                      >
+                        {kunjungan.jenis_pasien}
+                      </span>
                     </div>
 
-                    {kunjungan.mahasiswa && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-slate-500">Input oleh</p>
+                        <p className="text-slate-500">Tenaga Medis</p>
                         <p className="font-medium text-slate-900">
-                          {kunjungan.mahasiswa.full_name}
+                          {kunjungan.tenaga_medis_pj}
+                        </p>
+                      </div>
+
+                      {kunjungan.mahasiswa && (
+                        <div>
+                          <p className="text-slate-500">Input oleh</p>
+                          <p className="font-medium text-slate-900">
+                            {kunjungan.mahasiswa.full_name}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {kunjungan.diagnosis && (
+                      <div className="mt-3 pt-3 border-t">
+                        <p className="text-sm text-slate-500 mb-1">Diagnosis</p>
+                        <p className="font-medium text-slate-900">
+                          {kunjungan.diagnosis.kode_icd10}:{' '}
+                          {kunjungan.diagnosis.nama_diagnosis}
                         </p>
                       </div>
                     )}
-                  </div>
 
-                  {kunjungan.diagnosis && (
-                    <div className="mt-3 pt-3 border-t">
-                      <p className="text-sm text-slate-500 mb-1">Diagnosis</p>
-                      <p className="font-medium text-slate-900">
-                        {kunjungan.diagnosis.kode_icd10}:{' '}
-                        {kunjungan.diagnosis.nama_diagnosis}
-                      </p>
+                    <div className="mt-4 pt-3 border-t flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetail(kunjungan.id_kunjungan)}
+                        className="flex-1"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Lihat Detail
+                      </Button>
                     </div>
-                  )}
-
-                  <div className="mt-4 pt-3 border-t flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewDetail(kunjungan.id_kunjungan)}
-                      className="flex-1"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Lihat Detail
-                    </Button>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-slate-500">
-              <FileText className="w-12 h-12 mx-auto mb-2 text-slate-300" />
-              <p>Belum ada riwayat kunjungan</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-slate-500">
+                <FileText className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                <p>Belum ada riwayat kunjungan</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <Dialog open={showDetailModal} onOpenChange={closeModal}>
@@ -373,212 +372,207 @@ export const PatientDetailPage: React.FC = () => {
           </DialogHeader>
 
           <div className="overflow-y-auto px-6 pb-6">
-          {visitDetailLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-            </div>
-          ) : selectedVisit ? (
-            <div className="space-y-6" id="print-area">
-              <div className="border-b pb-4">
-                <h3 className="text-base font-bold text-slate-900 mb-3">
-                  Informasi Pasien
-                </h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-slate-600">No. RM:</span>{' '}
-                    <span className="font-medium">{patient?.no_rm}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-600">Nama:</span>{' '}
-                    <span className="font-medium">{patient?.nama_lengkap}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-600">Tanggal Kunjungan:</span>{' '}
-                    <span className="font-medium">
-                      {selectedVisit?.tgl_kunjungan ? formatDateTime(selectedVisit.tgl_kunjungan) : '-'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-600">Unit Pelayanan:</span>{' '}
-                    <span className="font-medium">{selectedVisit?.unit_pelayanan || '-'}</span>
-                  </div>
-                </div>
+            {visitDetailLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
               </div>
-
-              {selectedVisit?.subjektif && (
-                <div className="bg-slate-50 p-4 rounded-lg">
+            ) : selectedVisit ? (
+              <div className="space-y-6" id="print-area">
+                <div className="border-b pb-4">
                   <h3 className="text-base font-bold text-slate-900 mb-3">
-                    SOAP Subjektif
+                    Informasi Pasien
                   </h3>
-                  <div className="space-y-3 text-sm">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-slate-600 font-medium mb-1">Keluhan Utama</p>
-                      <p className="text-slate-900">
-                        {selectedVisit.subjektif.keluhan_utama || '-'}
-                      </p>
+                      <span className="text-slate-600">No. RM:</span>{' '}
+                      <span className="font-medium">{patient?.no_rm}</span>
                     </div>
                     <div>
-                      <p className="text-slate-600 font-medium mb-1">
-                        Riwayat Penyakit Sekarang (RPS)
-                      </p>
-                      <p className="text-slate-900">
-                        {selectedVisit.subjektif.rps || '-'}
-                      </p>
+                      <span className="text-slate-600">Nama:</span>{' '}
+                      <span className="font-medium">{patient?.nama_lengkap}</span>
                     </div>
                     <div>
-                      <p className="text-slate-600 font-medium mb-1">
-                        Riwayat Penyakit Dahulu (RPD)
-                      </p>
-                      <p className="text-slate-900">
-                        {selectedVisit.subjektif.rpd || '-'}
-                      </p>
+                      <span className="text-slate-600">Tanggal Kunjungan:</span>{' '}
+                      <span className="font-medium">
+                        {selectedVisit?.tgl_kunjungan ? formatDateTime(selectedVisit.tgl_kunjungan) : '-'}
+                      </span>
                     </div>
                     <div>
-                      <p className="text-slate-600 font-medium mb-1">
-                        Riwayat Penggunaan Obat
-                      </p>
-                      <p className="text-slate-900">
-                        {selectedVisit.subjektif.riwayat_obat || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-slate-600 font-medium mb-1">Riwayat Alergi</p>
-                      <p className="text-slate-900">
-                        {selectedVisit.subjektif.riwayat_alergi || '-'}
-                      </p>
+                      <span className="text-slate-600">Unit Pelayanan:</span>{' '}
+                      <span className="font-medium">{selectedVisit?.unit_pelayanan || '-'}</span>
                     </div>
                   </div>
                 </div>
-              )}
 
-              {selectedVisit?.objektif && (
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <h3 className="text-base font-bold text-slate-900 mb-3">
-                    SOAP Objektif
-                  </h3>
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <p className="text-slate-600 font-medium mb-2">Tanda Vital</p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <div className="bg-slate-50 p-2 rounded">
-                          <p className="text-xs text-slate-500">TD</p>
-                          <p className="font-medium">
-                            {selectedVisit.objektif.td_sistol || '-'}/
-                            {selectedVisit.objektif.td_diastol || '-'} mmHg
+                {Array.isArray(selectedVisit?.subjektif) && selectedVisit.subjektif.length > 0 && (
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <h3 className="text-base font-bold text-slate-900 mb-3">
+                      SOAP Subjektif
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <p className="text-slate-600 font-medium mb-1">Keluhan Utama</p>
+                        <p className="text-slate-900">
+                          {selectedVisit.subjektif[0].keluhan_utama || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-slate-600 font-medium mb-1">
+                          Riwayat Penyakit Sekarang (RPS)
+                        </p>
+                        <p className="text-slate-900">
+                          {selectedVisit.subjektif[0].rps || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-slate-600 font-medium mb-1">
+                          Riwayat Penyakit Dahulu (RPD)
+                        </p>
+                        <p className="text-slate-900">
+                          {selectedVisit.subjektif[0].rpd || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-slate-600 font-medium mb-1">
+                          Riwayat Penggunaan Obat
+                        </p>
+                        <p className="text-slate-900">
+                          {selectedVisit.subjektif[0].riwayat_obat || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-slate-600 font-medium mb-1">Riwayat Alergi</p>
+                        <p className="text-slate-900">
+                          {selectedVisit.subjektif[0].riwayat_alergi || '-'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {Array.isArray(selectedVisit?.objektif) && selectedVisit.objektif.length > 0 && (
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <h3 className="text-base font-bold text-slate-900 mb-3">
+                      SOAP Objektif
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <p className="text-slate-600 font-medium mb-2">Tanda Vital</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div className="bg-slate-50 p-2 rounded">
+                            <p className="text-xs text-slate-500">TD</p>
+                            <p className="font-medium">
+                              {selectedVisit.objektif[0].tv_td || '-'}
+                            </p>
+                          </div>
+                          <div className="bg-slate-50 p-2 rounded">
+                            <p className="text-xs text-slate-500">Nadi</p>
+                            <p className="font-medium">
+                              {selectedVisit.objektif[0].tv_nadi || '-'} x/menit
+                            </p>
+                          </div>
+                          <div className="bg-slate-50 p-2 rounded">
+                            <p className="text-xs text-slate-500">RR</p>
+                            <p className="font-medium">
+                              {selectedVisit.objektif[0].tv_rr || '-'} x/menit
+                            </p>
+                          </div>
+                          <div className="bg-slate-50 p-2 rounded">
+                            <p className="text-xs text-slate-500">Suhu</p>
+                            <p className="font-medium">
+                              {selectedVisit.objektif[0].tv_suhu || '-'} °C
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-slate-600 font-medium mb-1">TB</p>
+                          <p className="text-slate-900">
+                            {selectedVisit.objektif[0].tb || '-'} cm
                           </p>
                         </div>
-                        <div className="bg-slate-50 p-2 rounded">
-                          <p className="text-xs text-slate-500">Nadi</p>
-                          <p className="font-medium">
-                            {selectedVisit.objektif.nadi || '-'} x/menit
-                          </p>
-                        </div>
-                        <div className="bg-slate-50 p-2 rounded">
-                          <p className="text-xs text-slate-500">RR</p>
-                          <p className="font-medium">
-                            {selectedVisit.objektif.respiratory_rate || '-'} x/menit
-                          </p>
-                        </div>
-                        <div className="bg-slate-50 p-2 rounded">
-                          <p className="text-xs text-slate-500">Suhu</p>
-                          <p className="font-medium">
-                            {selectedVisit.objektif.suhu || '-'} °C
-                          </p>
-                        </div>
-                        <div className="bg-slate-50 p-2 rounded">
-                          <p className="text-xs text-slate-500">TB</p>
-                          <p className="font-medium">
-                            {selectedVisit.objektif.tinggi_badan || '-'} cm
-                          </p>
-                        </div>
-                        <div className="bg-slate-50 p-2 rounded">
-                          <p className="text-xs text-slate-500">BB</p>
-                          <p className="font-medium">
-                            {selectedVisit.objektif.berat_badan || '-'} kg
+                        <div>
+                          <p className="text-slate-600 font-medium mb-1">BB</p>
+                          <p className="text-slate-900">
+                            {selectedVisit.objektif[0].bb || '-'} kg
                           </p>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <p className="text-slate-600 font-medium mb-1">Pemeriksaan Fisik</p>
-                      <p className="text-slate-900">
-                        {selectedVisit.objektif.pemeriksaan_fisik || '-'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {selectedVisit?.pemeriksaan_penunjang && (
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <h3 className="text-base font-bold text-slate-900 mb-3">
-                    Pemeriksaan Penunjang
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <p className="text-slate-600 font-medium mb-1">Hasil File/Link</p>
-                      <p className="text-slate-900">
-                        {selectedVisit.pemeriksaan_penunjang.hasil_file || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-slate-600 font-medium mb-1">Catatan Klinis</p>
-                      <p className="text-slate-900">
-                        {selectedVisit.pemeriksaan_penunjang.catatan_klinis || '-'}
-                      </p>
+                      <div>
+                        <p className="text-slate-600 font-medium mb-1">Pemeriksaan Fisik</p>
+                        <p className="text-slate-900">
+                          {selectedVisit.objektif[0].fisik_naratif || '-'}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {selectedVisit?.asesmen && (
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <h3 className="text-base font-bold text-slate-900 mb-3">Diagnosis</h3>
-                  <div className="space-y-2 text-sm">
-                    {Array.isArray(selectedVisit.asesmen.diagnosis) &&
-                    selectedVisit.asesmen.diagnosis.length > 0 ? (
-                      selectedVisit.asesmen.diagnosis.map((diag: any, idx: number) => (
-                        <div key={idx} className="bg-blue-50 p-3 rounded">
-                          <p className="font-medium text-slate-900">
-                            {diag.kode_icd10}: {diag.nama_diagnosis}
-                          </p>
+                {Array.isArray(selectedVisit?.pemeriksaan_penunjang) && selectedVisit.pemeriksaan_penunjang.length > 0 && (
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <h3 className="text-base font-bold text-slate-900 mb-3">
+                      Pemeriksaan Penunjang
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      {selectedVisit.pemeriksaan_penunjang.map((pp: any, idx: number) => (
+                        <div key={idx} className="p-3 bg-slate-100 rounded">
+                          <p className="text-slate-600 font-medium">{pp.jenis}: {pp.nama_pemeriksaan}</p>
+                          <p className="text-slate-900">{pp.hasil || '-'}</p>
                         </div>
-                      ))
-                    ) : (
-                      <p className="text-slate-500">-</p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {selectedVisit?.plan && (
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <h3 className="text-base font-bold text-slate-900 mb-3">
-                    Plan & Terapi
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <p className="text-slate-600 font-medium mb-1">Rencana Terapi</p>
-                      <p className="text-slate-900">
-                        {selectedVisit.plan.rencana_terapi || '-'}
-                      </p>
+                      ))}
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              <div className="border-t pt-4 text-xs text-slate-500">
-                <p>
-                  Input oleh: {selectedVisit?.uploader_name || 'Unknown'} pada{' '}
-                  {selectedVisit?.created_at ? formatDateTime(selectedVisit.created_at) : (selectedVisit?.tgl_kunjungan ? formatDateTime(selectedVisit.tgl_kunjungan) : '-')}
-                </p>
+                {Array.isArray(selectedVisit?.asesmen) && selectedVisit.asesmen.length > 0 && (
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <h3 className="text-base font-bold text-slate-900 mb-3">Diagnosis</h3>
+                    <div className="space-y-2 text-sm">
+                      {Array.isArray((selectedVisit.asesmen[0] as any).diagnoses) &&
+                        (selectedVisit.asesmen[0] as any).diagnoses.length > 0 ? (
+                        (selectedVisit.asesmen[0] as any).diagnoses.map((diag: any, idx: number) => (
+                          <div key={idx} className="bg-blue-50 p-3 rounded">
+                            <p className="font-medium text-slate-900">
+                              {diag.kode_icd10}: {diag.nama_diagnosis}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-slate-500">-</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {Array.isArray(selectedVisit?.plan) && selectedVisit.plan.length > 0 && (
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <h3 className="text-base font-bold text-slate-900 mb-3">
+                      Plan & Terapi
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <p className="text-slate-600 font-medium mb-1">Rencana Terapi</p>
+                        <p className="text-slate-900">
+                          {(selectedVisit.plan[0] as any).rencana_umum || '-'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-t pt-4 text-xs text-slate-500">
+                  <p>
+                    Input oleh: {selectedVisit?.uploader_name || 'Unknown'} pada{' '}
+                    {selectedVisit?.created_at ? formatDateTime(selectedVisit.created_at) : (selectedVisit?.tgl_kunjungan ? formatDateTime(selectedVisit.tgl_kunjungan) : '-')}
+                  </p>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="text-center py-8 text-slate-500">
-              <p>Detail kunjungan tidak ditemukan</p>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-8 text-slate-500">
+                <p>Detail kunjungan tidak ditemukan</p>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
