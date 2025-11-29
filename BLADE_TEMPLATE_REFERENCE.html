@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Rekam Medis - Blind Review System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header Section -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h3 class="mb-0 fw-bold">Daftar Rekam Medis</h3>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a href="/create-medical-record" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i> Buat Rekam Medis Baru
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Search Bar -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="searchInput"
+                                placeholder="Cari berdasarkan No. RM, Nama Pasien, atau Unit Layanan..."
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="medicalRecordsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 15%;">Tanggal Kunjungan</th>
+                                <th scope="col" style="width: 25%;">No. RM & Nama Pasien</th>
+                                <th scope="col" style="width: 25%;">Diagnosis Utama</th>
+                                <th scope="col" style="width: 15%;">Diinput Oleh</th>
+                                <th scope="col" class="text-center" style="width: 20%;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--
+                            ============================================================
+                            BLADE TEMPLATE LOGIC (for Laravel):
+                            ============================================================
+
+                            @forelse($kunjungan_list as $row)
+                            <tr>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ \Carbon\Carbon::parse($row->tgl_kunjungan)->format('d/m/Y H:i') }}
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <div>
+                                        <strong>{{ $row->pasien->nama_lengkap }}</strong><br>
+                                        <small class="text-muted">RM: {{ $row->pasien->no_rm }}</small>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if($row->asesmen && $row->asesmen->diagnoses->first())
+                                        <span class="badge bg-info text-dark">
+                                            {{ $row->asesmen->diagnoses->first()->kode_icd10 }}
+                                        </span>
+                                        {{ $row->asesmen->diagnoses->first()->nama_diagnosis }}
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+
+                                <td>
+                                    {{-- CRITICAL: BLIND REVIEW PRIVACY LOGIC --}}
+                                    @if(auth()->user()->role == 'mahasiswa')
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-eye-slash me-1"></i> Anonymous
+                                        </span>
+                                    @elseif(auth()->user()->role == 'dosen' || auth()->user()->role == 'admin')
+                                        <span class="text-dark">
+                                            {{ $row->uploader_name }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="/medical-records/{{ $row->id_kunjungan }}"
+                                           class="btn btn-outline-primary"
+                                           title="Lihat Detail">
+                                            <i class="bi bi-eye"></i> Detail
+                                        </a>
+                                        <a href="/medical-records/{{ $row->id_kunjungan }}/print"
+                                           class="btn btn-outline-secondary"
+                                           title="Cetak"
+                                           target="_blank">
+                                            <i class="bi bi-printer"></i> Cetak
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                                    <p class="text-muted mt-2">Belum ada data rekam medis</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                            -->
+
+                            <!-- EXAMPLE STATIC DATA FOR DEMONSTRATION -->
+
+                            <!-- Example Row 1: Visible to Dosen/Admin -->
+                            <tr>
+                                <td>
+                                    <small class="text-muted">29/11/2025 10:30</small>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>Ahmad Syahputra</strong><br>
+                                        <small class="text-muted">RM: RM-2025-001</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">A09</span>
+                                    Diare akut
+                                </td>
+                                <td>
+                                    <!-- IF USER ROLE = 'mahasiswa' -->
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-eye-slash me-1"></i> Anonymous
+                                    </span>
+
+                                    <!-- IF USER ROLE = 'dosen' OR 'admin' -->
+                                    <!-- <span class="text-dark">Dr. Siti Nurhaliza</span> -->
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="#" class="btn btn-outline-primary" title="Lihat Detail">
+                                            <i class="bi bi-eye"></i> Detail
+                                        </a>
+                                        <a href="#" class="btn btn-outline-secondary" title="Cetak" target="_blank">
+                                            <i class="bi bi-printer"></i> Cetak
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Example Row 2 -->
+                            <tr>
+                                <td>
+                                    <small class="text-muted">28/11/2025 14:15</small>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>Siti Rahmawati</strong><br>
+                                        <small class="text-muted">RM: RM-2025-002</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">J06.9</span>
+                                    Infeksi saluran napas atas akut
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-eye-slash me-1"></i> Anonymous
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="#" class="btn btn-outline-primary" title="Lihat Detail">
+                                            <i class="bi bi-eye"></i> Detail
+                                        </a>
+                                        <a href="#" class="btn btn-outline-secondary" title="Cetak" target="_blank">
+                                            <i class="bi bi-printer"></i> Cetak
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Example Row 3 -->
+                            <tr>
+                                <td>
+                                    <small class="text-muted">27/11/2025 09:00</small>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>Budi Santoso</strong><br>
+                                        <small class="text-muted">RM: RM-2025-003</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">I10</span>
+                                    Hipertensi esensial
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-eye-slash me-1"></i> Anonymous
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="#" class="btn btn-outline-primary" title="Lihat Detail">
+                                            <i class="bi bi-eye"></i> Detail
+                                        </a>
+                                        <a href="#" class="btn btn-outline-secondary" title="Cetak" target="_blank">
+                                            <i class="bi bi-printer"></i> Cetak
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Info -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-0">
+                            Menampilkan 3 dari 3 rekam medis
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Pagination controls would go here -->
+                        <!-- {{ $kunjungan_list->links() }} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Search Filter Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const table = document.getElementById('medicalRecordsTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function() {
+                const filter = searchInput.value.toLowerCase();
+
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const text = row.textContent.toLowerCase();
+
+                    if (text.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-group-sm > .btn {
+            font-size: 0.875rem;
+        }
+
+        .badge {
+            font-weight: 500;
+        }
+    </style>
+</body>
+</html>
+
+<!--
+============================================================
+BLADE TEMPLATE VERSION (index.blade.php)
+============================================================
+
+@extends('layouts.app')
+
+@section('title', 'Daftar Rekam Medis')
+
+@section('content')
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h3 class="mb-0 fw-bold">Daftar Rekam Medis</h3>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="{{ route('medical-records.create') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i> Buat Rekam Medis Baru
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <form method="GET" action="{{ route('medical-records.index') }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input
+                                type="text"
+                                name="search"
+                                class="form-control"
+                                placeholder="Cari berdasarkan No. RM, Nama Pasien..."
+                                value="{{ request('search') }}"
+                            >
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tanggal Kunjungan</th>
+                            <th>No. RM & Nama Pasien</th>
+                            <th>Diagnosis Utama</th>
+                            <th>Diinput Oleh</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($kunjungan_list as $row)
+                        <tr>
+                            <td>
+                                <small class="text-muted">
+                                    {{ \Carbon\Carbon::parse($row->tgl_kunjungan)->format('d/m/Y H:i') }}
+                                </small>
+                            </td>
+
+                            <td>
+                                <div>
+                                    <strong>{{ $row->pasien->nama_lengkap }}</strong><br>
+                                    <small class="text-muted">RM: {{ $row->pasien->no_rm }}</small>
+                                </div>
+                            </td>
+
+                            <td>
+                                @if($row->asesmen && $row->asesmen->diagnoses->first())
+                                    <span class="badge bg-info text-dark">
+                                        {{ $row->asesmen->diagnoses->first()->kode_icd10 }}
+                                    </span>
+                                    {{ $row->asesmen->diagnoses->first()->nama_diagnosis }}
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+
+                            <td>
+                                @if(auth()->user()->role == 'mahasiswa')
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-eye-slash me-1"></i> Anonymous
+                                    </span>
+                                @elseif(auth()->user()->role == 'dosen' || auth()->user()->role == 'admin')
+                                    <span class="text-dark">
+                                        {{ $row->uploader_name }}
+                                    </span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ route('medical-records.show', $row->id_kunjungan) }}"
+                                       class="btn btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Detail
+                                    </a>
+                                    <a href="{{ route('medical-records.print', $row->id_kunjungan) }}"
+                                       class="btn btn-outline-secondary"
+                                       target="_blank">
+                                        <i class="bi bi-printer"></i> Cetak
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="bi bi-inbox fs-1 text-muted"></i>
+                                <p class="text-muted mt-2">Belum ada data rekam medis</p>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">
+                        Menampilkan {{ $kunjungan_list->count() }} dari {{ $kunjungan_list->total() }} rekam medis
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    {{ $kunjungan_list->links() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+============================================================
+CONTROLLER REFERENCE (KunjunganController.php)
+============================================================
+
+public function index(Request $request)
+{
+    $query = KunjunganResume::with([
+        'pasien',
+        'asesmen.diagnoses'
+    ]);
+
+    if ($request->has('search') && $request->search) {
+        $search = $request->search;
+        $query->whereHas('pasien', function($q) use ($search) {
+            $q->where('no_rm', 'like', "%{$search}%")
+              ->orWhere('nama_lengkap', 'like', "%{$search}%");
+        });
+    }
+
+    $kunjungan_list = $query->orderBy('tgl_kunjungan', 'desc')->paginate(15);
+
+    return view('medical-records.index', compact('kunjungan_list'));
+}
+
+-->

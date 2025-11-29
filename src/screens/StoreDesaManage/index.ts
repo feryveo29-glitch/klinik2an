@@ -1,0 +1,1 @@
+export { StoreDesaManage } from "./StoreDesaManage";
