@@ -24,6 +24,7 @@ import {
 import { PatientService, type Patient } from '../services/patient.service';
 import { MedicalRecordsService } from '../services/medical-records.service';
 import { DummyDataService } from '../services/dummy-data.service';
+import { AIGeneratorButton } from '../components/ui/AIGeneratorButton';
 import { RegistrationService, type RegistrationWithPatient } from '../services/registration.service';
 import type { User } from '../types/auth.types';
 
@@ -167,51 +168,30 @@ export const PatientExaminationPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleGenerateSubjektif = () => {
-    const data = DummyDataService.generateSOAPSubjektif();
+  const handleAIGenerate = (data: any) => {
+    // Mapping data dari AI ke form state
     setFormData(prev => ({
       ...prev,
-      keluhan_utama: data.keluhan_utama,
-      rps: data.riwayat_penyakit_sekarang,
-      rpd: data.riwayat_penyakit_dahulu,
-      riwayat_obat: data.riwayat_pengobatan,
-      riwayat_alergi: data.riwayat_alergi,
+      keluhan_utama: data.keluhan_utama || '',
+      rps: data.anamnesis?.rps || '',
+      rpd: data.anamnesis?.rpd || '',
+      riwayat_obat: data.anamnesis?.riwayat_obat || '',
+      riwayat_alergi: data.anamnesis?.alergi || '',
+      td_sistol: data.pemeriksaan_fisik?.td_sistol?.toString() || '',
+      td_diastol: data.pemeriksaan_fisik?.td_diastol?.toString() || '',
+      nadi: data.pemeriksaan_fisik?.nadi?.toString() || '',
+      suhu: data.pemeriksaan_fisik?.suhu?.toString() || '',
+      respiratory_rate: data.pemeriksaan_fisik?.rr?.toString() || '',
+      berat_badan: data.pemeriksaan_fisik?.bb?.toString() || '',
+      tinggi_badan: data.pemeriksaan_fisik?.tb?.toString() || '',
+      catatan_klinis: data.pemeriksaan_fisik?.catatan || '',
+      icd10_code: data.diagnosis?.kode_icd10 || '',
+      diagnosis_name: data.diagnosis?.nama_diagnosis || '',
+      rencana_terapi: data.terapi || '',
     }));
   };
 
-  const handleGenerateObjektif = () => {
-    const data = DummyDataService.generateSOAPObjektif();
-    const [sistol, diastol] = data.tekanan_darah.split('/');
-    setFormData(prev => ({
-      ...prev,
-      td_sistol: sistol.trim(),
-      td_diastol: diastol.replace(' mmHg', '').trim(),
-      nadi: data.nadi.replace(' x/menit', '').trim(),
-      respiratory_rate: data.pernapasan.replace(' x/menit', '').trim(),
-      suhu: data.suhu.replace('°C', '').trim(),
-      tinggi_badan: data.tinggi_badan.replace(' cm', '').trim(),
-      berat_badan: data.berat_badan.replace(' kg', '').trim(),
-      pemeriksaan_fisik: data.pemeriksaan_fisik_umum,
-    }));
-  };
 
-  const handleGenerateDiagnosis = () => {
-    const data = DummyDataService.generateDiagnosis();
-    setFormData(prev => ({
-      ...prev,
-      icd10_code: data.kode_icd10,
-      diagnosis_name: data.diagnosis_utama,
-    }));
-  };
-
-  const handleGeneratePlan = () => {
-    const data = DummyDataService.generatePlanTerapi();
-    setFormData(prev => ({
-      ...prev,
-      rencana_terapi: data.terapi_farmakologi,
-      catatan_klinis: `${data.terapi_non_farmakologi}\n\n${data.rencana_tindak_lanjut}\n\nPrognosis: ${data.prognosis}`,
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -473,6 +453,27 @@ export const PatientExaminationPage: React.FC = () => {
                       )}
                     </>
                   )}
+
+                  {selectedPatient ? (
+                    <div className="mt-4 flex justify-end">
+                      <AIGeneratorButton
+                        mode="medical-record"
+                        contextData={{
+                          nama: selectedPatient.nama_lengkap,
+                          umur: new Date().getFullYear() - new Date(selectedPatient.tgl_lahir).getFullYear(),
+                          gender: selectedPatient.jenis_kelamin
+                        }}
+                        onGenerate={handleAIGenerate}
+                      />
+                    </div>
+                  ) : (
+                    <div className="mt-4 flex justify-end">
+                      <Button variant="outline" disabled className="gap-2 opacity-50 cursor-not-allowed">
+                        <Sparkles className="w-4 h-4" />
+                        Pilih Pasien Dulu untuk Generate AI
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-4">
@@ -579,18 +580,7 @@ export const PatientExaminationPage: React.FC = () => {
               <TabsContent value="subjektif" className="space-y-4">
                 <div className="flex items-center justify-between border-b pb-2">
                   <h3 className="text-xl font-semibold">SOAP Subjektif</h3>
-                  {isAdmin && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleGenerateSubjektif}
-                      className="gap-2"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Generate
-                    </Button>
-                  )}
+
                 </div>
 
                 <div className="space-y-4">
@@ -672,18 +662,7 @@ export const PatientExaminationPage: React.FC = () => {
               <TabsContent value="objektif" className="space-y-4">
                 <div className="flex items-center justify-between border-b pb-2">
                   <h3 className="text-xl font-semibold">SOAP Objektif</h3>
-                  {isAdmin && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleGenerateObjektif}
-                      className="gap-2"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Generate
-                    </Button>
-                  )}
+
                 </div>
 
                 <div className="space-y-4">
@@ -831,18 +810,7 @@ export const PatientExaminationPage: React.FC = () => {
               <TabsContent value="diagnosis" className="space-y-4">
                 <div className="flex items-center justify-between border-b pb-2">
                   <h3 className="text-xl font-semibold">Diagnosis</h3>
-                  {isAdmin && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleGenerateDiagnosis}
-                      className="gap-2"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Generate
-                    </Button>
-                  )}
+
                 </div>
 
                 <div className="space-y-4">
@@ -886,18 +854,7 @@ export const PatientExaminationPage: React.FC = () => {
               <TabsContent value="plan" className="space-y-4">
                 <div className="flex items-center justify-between border-b pb-2">
                   <h3 className="text-xl font-semibold">Plan & Terapi</h3>
-                  {isAdmin && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleGeneratePlan}
-                      className="gap-2"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Generate
-                    </Button>
-                  )}
+
                 </div>
 
                 <div className="space-y-4">

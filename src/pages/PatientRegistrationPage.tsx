@@ -15,7 +15,8 @@ import { Button } from '../components/ui/button';
 import { UserPlus, Loader2, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 import { PatientService } from '../services/patient.service';
 import { QueueService } from '../services/queue.service';
-import { DummyDataService } from '../services/dummy-data.service';
+// import { DummyDataService } from '../services/dummy-data.service'; // Bisa dihapus nanti
+import { AIGeneratorButton } from '../components/ui/AIGeneratorButton';
 import type { User } from '../types/auth.types';
 
 export const PatientRegistrationPage: React.FC = () => {
@@ -109,12 +110,13 @@ export const PatientRegistrationPage: React.FC = () => {
     handleInputChange('no_rm', newRM);
   };
 
-  const handleGenerateDummyData = async () => {
-    const dummyData = DummyDataService.generatePatientData();
+  const handleAIGenerate = async (data: any) => {
     await generateNoRM();
     setFormData(prev => ({
       ...prev,
-      ...dummyData,
+      ...data,
+      // Pastikan field yang mungkin beda nama disesuaikan
+      tempat_lahir: data.alamat?.split(',')[1]?.trim() || 'Jakarta', // Estimasi kota dari alamat
     }));
   };
 
@@ -237,16 +239,10 @@ export const PatientRegistrationPage: React.FC = () => {
                 Data Identitas Pasien
               </CardTitle>
               {isAdmin && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleGenerateDummyData}
-                  className="gap-2"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Generate Dummy Data
-                </Button>
+                <AIGeneratorButton
+                  mode="patient"
+                  onGenerate={handleAIGenerate}
+                />
               )}
             </div>
           </CardHeader>

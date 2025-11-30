@@ -18,6 +18,7 @@ import { APMPage } from "./pages/APMPage";
 import { APMNewPatientPage } from "./pages/APMNewPatientPage";
 import { APMExistingPatientPage } from "./pages/APMExistingPatientPage";
 import { PrintMedicalRecordPage } from "./pages/PrintMedicalRecordPage";
+import { FacilityManagementPage } from "./pages/FacilityManagementPage";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
@@ -46,6 +47,7 @@ createRoot(document.getElementById("app") as HTMLElement).render(
           <Route path="/upload-mahasiswa" element={<UploadMahasiswaPage />} />
           <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/print-medical-record" element={<PrintMedicalRecordPage />} />
+          <Route path="/facility-management" element={<FacilityManagementPage />} />
         </Routes>
       </BrowserRouter>
     </ToastProvider>

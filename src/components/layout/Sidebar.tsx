@@ -13,8 +13,11 @@ import {
   ClipboardList,
   Stethoscope,
   Printer,
+  Building,
 } from 'lucide-react';
 import type { User } from '../../types/auth.types';
+
+import { facilityService } from '../../services/facility.service';
 
 interface SidebarProps {
   user: User;
@@ -24,6 +27,22 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [fasyankesName, setFasyankesName] = React.useState('RME System');
+
+  React.useEffect(() => {
+    const fetchProfil = async () => {
+      const { data } = await facilityService.getProfil();
+      if (data?.nama_fasyankes) {
+        setFasyankesName(data.nama_fasyankes);
+      }
+    };
+
+    fetchProfil();
+
+    // Listen event update
+    window.addEventListener('facility-updated', fetchProfil);
+    return () => window.removeEventListener('facility-updated', fetchProfil);
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -31,10 +50,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
     mahasiswa: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
       { icon: ClipboardList, label: 'Registrasi Kunjungan', path: '/registration' },
-      { icon: PlusCircle, label: 'Pendaftaran Pasien', path: '/patient-registration' },
-      { icon: Stethoscope, label: 'Pemeriksaan Pasien', path: '/patient-examination' },
-      { icon: FileText, label: 'Riwayat Input', path: '/medical-records' },
-      { icon: Printer, label: 'Cetak Resume Medis', path: '/print-medical-record' },
+      { icon: Stethoscope, label: 'Pemeriksaan', path: '/examination' },
+      { icon: Printer, label: 'Cetak Resume', path: '/print-medical-record' },
     ],
     dosen: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -55,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
       { icon: UserPlus, label: 'Manajemen User', path: '/users' },
       { icon: Upload, label: 'Upload Mahasiswa', path: '/upload-mahasiswa' },
       { icon: Printer, label: 'Cetak Resume Medis', path: '/print-medical-record' },
+      { icon: Building, label: 'Manajemen Fasilitas', path: '/facility-management' },
     ],
   };
 
@@ -68,7 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900">RME System</h1>
+            <h1 className="text-lg font-bold text-slate-900">{fasyankesName}</h1>
             <p className="text-xs text-slate-500">Medical Records</p>
           </div>
         </div>

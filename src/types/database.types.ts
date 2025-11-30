@@ -147,3 +147,20 @@ export interface KunjunganWithRelations extends KunjunganResume {
   uploader?: User;
   uploader_name?: string;
 }
+export interface ProfilFasyankes {
+  id: string;
+  nama_fasyankes: string;
+  kode_fasyankes?: string;
+  alamat?: string;
+  kota?: string;
+  provinsi?: string;
+  kode_pos?: string;
+  telepon?: string;
+  email?: string;
+  website?: string;
+  logo_url?: string;
+  kepala_fasyankes?: string;
+  no_izin?: string;
+  created_at?: string;
+  updated_at?: string;
+}
