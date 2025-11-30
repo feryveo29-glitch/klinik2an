@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Printer, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Search, Printer, CheckCircle, Loader2, Calendar, Clock } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { QueueService, type QueueNumber } from '../services/queue.service';
 import { PatientService, type Patient } from '../services/patient.service';
 import { useToast } from '../components/ui/toast';
+import { facilityService } from '../services/facility.service';
 
 export const APMExistingPatientPage: React.FC = () => {
   const navigate = useNavigate();
@@ -18,6 +19,29 @@ export const APMExistingPatientPage: React.FC = () => {
   const [queueData, setQueueData] = useState<QueueNumber | null>(null);
   const [generating, setGenerating] = useState(false);
   const printRef = useRef<HTMLDivElement>(null);
+  const [facilityName, setFacilityName] = useState('Klinik Pratama');
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data } = await facilityService.getProfil();
+        if (data) {
+          setFacilityName(data.nama_fasyankes);
+        }
+      } catch (error) {
+        console.error('Failed to fetch facility profile:', error);
+      }
+    };
+
+    fetchProfile();
+
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (queueData) {
@@ -106,61 +130,78 @@ export const APMExistingPatientPage: React.FC = () => {
 
   if (queueData && patient) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-        <div className="max-w-2xl mx-auto p-8">
-          <div className="bg-white rounded-3xl shadow-2xl p-12 text-center">
-            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-16 h-16 text-green-600" />
-            </div>
-
-            <h1 className="text-4xl font-bold text-slate-900 mb-4">
-              Nomor Antrian Anda
-            </h1>
-
-            <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl py-8 px-6 mb-6">
-              <div className="text-6xl font-bold mb-2">{queueData.full_queue_code}</div>
-              <div className="text-2xl font-medium">Counter B</div>
-            </div>
-
-            <div className="bg-slate-50 rounded-xl p-6 mb-8 text-left">
-              <h3 className="font-bold text-lg mb-3">Data Pasien:</h3>
-              <div className="space-y-2 text-slate-700">
-                <p><span className="font-medium">No. RM:</span> {patient.no_rm}</p>
-                <p><span className="font-medium">Nama:</span> {patient.nama_lengkap}</p>
-                <p><span className="font-medium">NIK:</span> {patient.nik}</p>
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 print:hidden flex flex-col items-center justify-center p-4">
+          <div className="max-w-2xl w-full">
+            <div className="bg-white rounded-3xl shadow-2xl p-12 text-center">
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-16 h-16 text-green-600" />
               </div>
-            </div>
 
-            <p className="text-xl text-slate-600 mb-8">
-              Silakan menuju <span className="font-bold text-green-600">Counter B</span> untuk registrasi kunjungan
-            </p>
+              <h1 className="text-4xl font-bold text-slate-900 mb-4">
+                Nomor Antrian Anda
+              </h1>
 
-            <div className="flex gap-4 justify-center">
-              <Button
-                onClick={handlePrint}
-                size="lg"
-                className="text-lg px-8 py-6"
-              >
-                <Printer className="w-6 h-6 mr-2" />
-                Cetak Ulang
-              </Button>
-              <Button
-                onClick={handleBackToHome}
-                variant="outline"
-                size="lg"
-                className="text-lg px-8 py-6"
-              >
-                <ArrowLeft className="w-6 h-6 mr-2" />
-                Kembali
-              </Button>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-green-600 mb-2">{facilityName}</h2>
+                <div className="flex items-center justify-center gap-4 text-lg text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {currentDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                  </div>
+                  <div className="w-px h-4 bg-slate-300"></div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    {currentDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl py-8 px-6 mb-6">
+                <div className="text-6xl font-bold mb-2">{queueData.full_queue_code}</div>
+                <div className="text-2xl font-medium">Counter B</div>
+              </div>
+
+              <div className="bg-slate-50 rounded-xl p-6 mb-8 text-left">
+                <h3 className="font-bold text-lg mb-3">Data Pasien:</h3>
+                <div className="space-y-2 text-slate-700">
+                  <p><span className="font-medium">No. RM:</span> {patient.no_rm}</p>
+                  <p><span className="font-medium">Nama:</span> {patient.nama_lengkap}</p>
+                  <p><span className="font-medium">NIK:</span> {patient.nik}</p>
+                </div>
+              </div>
+
+              <p className="text-xl text-slate-600 mb-8">
+                Silakan menuju <span className="font-bold text-green-600">Counter B</span> untuk registrasi kunjungan
+              </p>
+
+              <div className="flex gap-4 justify-center">
+                <Button
+                  onClick={handlePrint}
+                  size="lg"
+                  className="text-lg px-8 py-6"
+                >
+                  <Printer className="w-6 h-6 mr-2" />
+                  Cetak Ulang
+                </Button>
+                <Button
+                  onClick={handleBackToHome}
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-8 py-6"
+                >
+                  <ArrowLeft className="w-6 h-6 mr-2" />
+                  Kembali
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="hidden print:block" ref={printRef}>
-          <div className="p-8 bg-white">
+        <div id="print-area" className="hidden print:block w-full bg-white" ref={printRef}>
+          <div className="p-8">
             <div className="text-center border-4 border-dashed border-slate-300 p-8">
-              <img src="/logo-dewata-1.png" alt="Logo" className="h-16 mx-auto mb-4" />
+
               <h2 className="text-3xl font-bold mb-2">NOMOR ANTRIAN</h2>
               <div className="text-sm text-slate-600 mb-4">Registrasi Pasien Lama</div>
 
@@ -191,7 +232,7 @@ export const APMExistingPatientPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -227,31 +268,28 @@ export const APMExistingPatientPage: React.FC = () => {
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={() => setSearchType('no_rm')}
-                  className={`p-4 rounded-xl border-2 font-medium transition-all ${
-                    searchType === 'no_rm'
-                      ? 'border-green-500 bg-green-50 text-green-700'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+                  className={`p-4 rounded-xl border-2 font-medium transition-all ${searchType === 'no_rm'
+                    ? 'border-green-500 bg-green-50 text-green-700'
+                    : 'border-slate-200 hover:border-slate-300'
+                    }`}
                 >
                   No. RM
                 </button>
                 <button
                   onClick={() => setSearchType('nik')}
-                  className={`p-4 rounded-xl border-2 font-medium transition-all ${
-                    searchType === 'nik'
-                      ? 'border-green-500 bg-green-50 text-green-700'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+                  className={`p-4 rounded-xl border-2 font-medium transition-all ${searchType === 'nik'
+                    ? 'border-green-500 bg-green-50 text-green-700'
+                    : 'border-slate-200 hover:border-slate-300'
+                    }`}
                 >
                   NIK
                 </button>
                 <button
                   onClick={() => setSearchType('no_bpjs')}
-                  className={`p-4 rounded-xl border-2 font-medium transition-all ${
-                    searchType === 'no_bpjs'
-                      ? 'border-green-500 bg-green-50 text-green-700'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+                  className={`p-4 rounded-xl border-2 font-medium transition-all ${searchType === 'no_bpjs'
+                    ? 'border-green-500 bg-green-50 text-green-700'
+                    : 'border-slate-200 hover:border-slate-300'
+                    }`}
                 >
                   No. BPJS
                 </button>
@@ -263,15 +301,14 @@ export const APMExistingPatientPage: React.FC = () => {
                 {searchType === 'no_rm'
                   ? 'Nomor Rekam Medis'
                   : searchType === 'nik'
-                  ? 'NIK'
-                  : 'Nomor BPJS'}
+                    ? 'NIK'
+                    : 'Nomor BPJS'}
               </Label>
               <Input
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                placeholder={`Masukkan ${
-                  searchType === 'no_rm' ? 'No. RM' : searchType === 'nik' ? 'NIK' : 'No. BPJS'
-                }`}
+                placeholder={`Masukkan ${searchType === 'no_rm' ? 'No. RM' : searchType === 'nik' ? 'NIK' : 'No. BPJS'
+                  }`}
                 className="text-xl p-6 h-auto"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
-import { Lock, Mail, AlertCircle } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowLeft } from 'lucide-react';
 import { AuthService } from '../services/auth.service';
 
 export const LoginPage: React.FC = () => {
@@ -116,6 +116,16 @@ export const LoginPage: React.FC = () => {
                 <li>• Mahasiswa: mahasiswa1@rme.com / mhs123</li>
               </ul>
             </div>
+
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full text-slate-500 hover:text-slate-700 mt-4"
+              onClick={() => navigate('/apm')}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Kembali ke Halaman APM
+            </Button>
           </form>
         </CardContent>
       </Card>

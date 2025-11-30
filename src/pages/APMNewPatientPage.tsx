@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Printer, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Printer, CheckCircle, Calendar, Clock } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { QueueService, type QueueNumber } from '../services/queue.service';
 import { useToast } from '../components/ui/toast';
+import { facilityService } from '../services/facility.service';
 
 export const APMNewPatientPage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +12,29 @@ export const APMNewPatientPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [queueData, setQueueData] = useState<QueueNumber | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
+  const [facilityName, setFacilityName] = useState('Klinik Pratama');
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data } = await facilityService.getProfil();
+        if (data) {
+          setFacilityName(data.nama_fasyankes);
+        }
+      } catch (error) {
+        console.error('Failed to fetch facility profile:', error);
+      }
+    };
+
+    fetchProfile();
+
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (queueData) {
@@ -54,52 +78,69 @@ export const APMNewPatientPage: React.FC = () => {
 
   if (queueData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-        <div className="max-w-2xl mx-auto p-8">
-          <div className="bg-white rounded-3xl shadow-2xl p-12 text-center">
-            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-16 h-16 text-green-600" />
-            </div>
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 print:hidden flex flex-col items-center justify-center p-4">
+          <div className="max-w-2xl w-full">
+            <div className="bg-white rounded-3xl shadow-2xl p-12 text-center">
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-16 h-16 text-green-600" />
+              </div>
 
-            <h1 className="text-4xl font-bold text-slate-900 mb-4">
-              Nomor Antrian Anda
-            </h1>
+              <h1 className="text-4xl font-bold text-slate-900 mb-4">
+                Nomor Antrian Anda
+              </h1>
 
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl py-8 px-6 mb-8">
-              <div className="text-6xl font-bold mb-2">{queueData.full_queue_code}</div>
-              <div className="text-2xl font-medium">Counter A</div>
-            </div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-blue-600 mb-2">{facilityName}</h2>
+                <div className="flex items-center justify-center gap-4 text-lg text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {currentDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                  </div>
+                  <div className="w-px h-4 bg-slate-300"></div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    {currentDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              </div>
 
-            <p className="text-xl text-slate-600 mb-8">
-              Silakan menuju <span className="font-bold text-blue-600">Counter A</span> untuk pendaftaran pasien baru
-            </p>
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl py-8 px-6 mb-8">
+                <div className="text-6xl font-bold mb-2">{queueData.full_queue_code}</div>
+                <div className="text-2xl font-medium">Counter A</div>
+              </div>
 
-            <div className="flex gap-4 justify-center">
-              <Button
-                onClick={handlePrint}
-                size="lg"
-                className="text-lg px-8 py-6"
-              >
-                <Printer className="w-6 h-6 mr-2" />
-                Cetak Ulang
-              </Button>
-              <Button
-                onClick={handleBackToHome}
-                variant="outline"
-                size="lg"
-                className="text-lg px-8 py-6"
-              >
-                <ArrowLeft className="w-6 h-6 mr-2" />
-                Kembali
-              </Button>
+              <p className="text-xl text-slate-600 mb-8">
+                Silakan menuju <span className="font-bold text-blue-600">Counter A</span> untuk pendaftaran pasien baru
+              </p>
+
+              <div className="flex gap-4 justify-center">
+                <Button
+                  onClick={handlePrint}
+                  size="lg"
+                  className="text-lg px-8 py-6"
+                >
+                  <Printer className="w-6 h-6 mr-2" />
+                  Cetak Ulang
+                </Button>
+                <Button
+                  onClick={handleBackToHome}
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-8 py-6"
+                >
+                  <ArrowLeft className="w-6 h-6 mr-2" />
+                  Kembali
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="hidden print:block" ref={printRef}>
-          <div className="p-8 bg-white">
+        <div id="print-area" className="hidden print:block w-full bg-white" ref={printRef}>
+          <div className="p-8">
             <div className="text-center border-4 border-dashed border-slate-300 p-8">
-              <img src="/logo-dewata-1.png" alt="Logo" className="h-16 mx-auto mb-4" />
+
               <h2 className="text-3xl font-bold mb-2">NOMOR ANTRIAN</h2>
               <div className="text-sm text-slate-600 mb-4">Pendaftaran Pasien Baru</div>
 
@@ -122,7 +163,7 @@ export const APMNewPatientPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 

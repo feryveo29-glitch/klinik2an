@@ -4,9 +4,9 @@ import { Button } from '../ui/button';
 import {
   LayoutDashboard,
   Users,
-  FileText,
+
   UserPlus,
-  LogOut,
+
   GraduationCap,
   PlusCircle,
   Upload,
@@ -14,35 +14,21 @@ import {
   Stethoscope,
   Printer,
   Building,
+  Megaphone,
 } from 'lucide-react';
 import type { User } from '../../types/auth.types';
 
-import { facilityService } from '../../services/facility.service';
+
 
 interface SidebarProps {
   user: User;
-  onLogout: () => void;
+
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [fasyankesName, setFasyankesName] = React.useState('RME System');
 
-  React.useEffect(() => {
-    const fetchProfil = async () => {
-      const { data } = await facilityService.getProfil();
-      if (data?.nama_fasyankes) {
-        setFasyankesName(data.nama_fasyankes);
-      }
-    };
-
-    fetchProfil();
-
-    // Listen event update
-    window.addEventListener('facility-updated', fetchProfil);
-    return () => window.removeEventListener('facility-updated', fetchProfil);
-  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -73,40 +59,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
       { icon: Upload, label: 'Upload Mahasiswa', path: '/upload-mahasiswa' },
       { icon: Printer, label: 'Cetak Resume Medis', path: '/print-medical-record' },
       { icon: Building, label: 'Manajemen Fasilitas', path: '/facility-management' },
+      { icon: Megaphone, label: 'Info Running Text', path: '/information-management' },
     ],
   };
 
   const currentMenu = menuItems[user.role] || [];
 
   return (
-    <div className="w-64 bg-white border-r min-h-screen flex flex-col">
-      <div className="p-6 border-b">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-            <FileText className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-slate-900">{fasyankesName}</h1>
-            <p className="text-xs text-slate-500">Medical Records</p>
-          </div>
-        </div>
-      </div>
+    <div className="w-64 bg-white border-r h-full flex flex-col">
 
-      <div className="p-4 border-b bg-slate-50">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-            {user.name.charAt(0).toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-900 truncate">
-              {user.name}
-            </p>
-            <p className="text-xs text-slate-500 capitalize">{user.role}</p>
-          </div>
-        </div>
-      </div>
 
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
           {currentMenu.map((item) => {
             const Icon = item.icon;
@@ -130,16 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
         </div>
       </nav>
 
-      <div className="p-4 border-t">
-        <Button
-          variant="outline"
-          className="w-full justify-start gap-3 text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
-          onClick={onLogout}
-        >
-          <LogOut className="w-5 h-5" />
-          Logout
-        </Button>
-      </div>
+
     </div>
   );
 };

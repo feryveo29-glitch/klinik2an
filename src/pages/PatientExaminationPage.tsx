@@ -307,19 +307,19 @@ export const PatientExaminationPage: React.FC = () => {
 
   return (
     <PageWrapper>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold flex items-center gap-2">
-            <ClipboardCheck className="w-8 h-8" />
-            Pemeriksaan Pasien
-          </CardTitle>
-          <p className="text-slate-600 mt-1">
-            Input data SOAP dan diagnosis pasien
-          </p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Card className="w-full">
+          <div className="sticky top-0 z-20 bg-white border-b shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-3xl font-bold flex items-center gap-2">
+                <ClipboardCheck className="w-8 h-8" />
+                Pemeriksaan Pasien
+              </CardTitle>
+              <p className="text-slate-600 mt-1">
+                Input data SOAP dan diagnosis pasien
+              </p>
+            </CardHeader>
+            <div className="px-6 pb-4">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="kunjungan">Data Kunjungan</TabsTrigger>
                 <TabsTrigger value="subjektif">SOAP Subjektif</TabsTrigger>
@@ -327,6 +327,10 @@ export const PatientExaminationPage: React.FC = () => {
                 <TabsTrigger value="diagnosis">Diagnosis</TabsTrigger>
                 <TabsTrigger value="plan">Plan & Terapi</TabsTrigger>
               </TabsList>
+            </div>
+          </div>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit}>
 
               <TabsContent value="kunjungan" className="space-y-6">
                 <div className="space-y-4">
@@ -894,10 +898,11 @@ export const PatientExaminationPage: React.FC = () => {
                   </div>
                 </div>
               </TabsContent>
-            </Tabs>
-          </form>
-        </CardContent>
-      </Card>
+
+            </form>
+          </CardContent>
+        </Card>
+      </Tabs>
     </PageWrapper>
   );
 };
