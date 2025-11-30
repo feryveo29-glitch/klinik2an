@@ -48,7 +48,7 @@ export const LoginPage: React.FC = () => {
             </div>
           </div>
           <CardTitle className="text-3xl font-bold text-slate-900">
-            Sistem Rekam Medis
+            Klinikin by Dikodein
           </CardTitle>
           <p className="text-slate-500 text-sm">
             Masukkan kredensial Anda untuk melanjutkan
