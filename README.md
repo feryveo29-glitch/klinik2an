@@ -114,3 +114,79 @@ Dilarang keras menyalin, memodifikasi, atau mendistribusikan ulang tanpa izin te
 
 ---
 *Dibuat dengan ❤️ oleh Tim Dikodein*
+
+## 🔄 Alur Data (Data Flow)
+
+Berikut adalah gambaran bagaimana data mengalir dalam sistem **Klinikin by Dikodein**:
+
+1.  **Pendaftaran (Registration)**
+    *   Pasien datang dan mendaftar melalui **APM (Anjungan Pendaftaran Mandiri)** atau loket.
+    *   Data pasien disimpan di tabel `identitas_pasien`.
+    *   Sistem membuat tiket antrian di tabel `antrian` (queue).
+    *   Data kunjungan awal dicatat di tabel `kunjungan_resume`.
+
+2.  **Pemeriksaan (Examination)**
+    *   Dokter/Perawat memanggil pasien berdasarkan nomor antrian.
+    *   Tenaga medis mengisi rekam medis dengan metode **SOAP**:
+        *   **S (Subjective)**: Keluhan utama, riwayat penyakit (tabel `soap_subjektif`).
+        *   **O (Objective)**: Tanda vital, fisik (tabel `soap_objektif`).
+        *   **A (Assessment)**: Diagnosis ICD-10 (tabel `soap_asesmen_diagnosis` & `diagnosis`).
+        *   **P (Plan)**: Rencana terapi, resep obat, tindakan (tabel `soap_plan`, `terapi_obat`, `tindakan_medis`).
+
+3.  **Penunjang & Hasil**
+    *   Jika ada pemeriksaan lab/radiologi, data disimpan di `pemeriksaan_penunjang`.
+
+4.  **Output & Laporan**
+    *   Data dari seluruh tabel di atas dikompilasi untuk mencetak **Resume Medis** atau laporan kunjungan.
+
+## 💾 Skema Database
+
+Sistem menggunakan database relasional (PostgreSQL via Supabase) dengan tabel-tabel utama sebagai berikut:
+
+### Tabel Utama
+
+| Nama Tabel | Deskripsi | Relasi Utama |
+| :--- | :--- | :--- |
+| `users` | Data pengguna sistem (Admin, Dosen, Mahasiswa). | - |
+| `identitas_pasien` | Data demografis pasien (NIK, RM, Nama, dll). | `id_pasien` (PK) |
+| `kunjungan_resume` | Header transaksi kunjungan pasien. | `id_pasien` (FK) |
+| `profil_fasyankes` | Konfigurasi profil klinik (Nama, Logo, Alamat). | - |
+
+### Tabel Rekam Medis (SOAP)
+
+Seluruh tabel ini berelasi dengan `kunjungan_resume` melalui `id_kunjungan`.
+
+| Nama Tabel | Deskripsi |
+| :--- | :--- |
+| `soap_subjektif` | Keluhan utama, RPS, RPD, Alergi. |
+| `soap_objektif` | Tanda vital (Tensi, Suhu, Nadi), BB/TB. |
+| `soap_asesmen_diagnosis` | Header diagnosis. |
+| `diagnosis` | Detail diagnosis (Kode ICD-10). Relasi ke `soap_asesmen_diagnosis`. |
+| `soap_plan` | Header rencana penatalaksanaan. |
+| `tindakan_medis` | Detail tindakan yang dilakukan. Relasi ke `soap_plan`. |
+| `terapi_obat` | Detail resep obat. Relasi ke `soap_plan`. |
+| `pemeriksaan_penunjang` | File hasil lab/radiologi. |
+
+### Diagram Relasi Sederhana (ERD)
+
+```mermaid
+erDiagram
+    PASIEN ||--o{ KUNJUNGAN : memiliki
+    KUNJUNGAN ||--|| SUBJEKTIF : contains
+    KUNJUNGAN ||--|| OBJEKTIF : contains
+    KUNJUNGAN ||--|| ASESMEN : contains
+    KUNJUNGAN ||--|| PLAN : contains
+    ASESMEN ||--o{ DIAGNOSIS : has
+    PLAN ||--o{ TINDAKAN : has
+    PLAN ||--o{ OBAT : has
+
+    PASIEN {
+        string no_rm
+        string nama
+        string nik
+    }
+    KUNJUNGAN {
+        date tgl_kunjungan
+        string unit_pelayanan
+    }
+```
